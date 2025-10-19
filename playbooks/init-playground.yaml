@@ -64,23 +64,26 @@
     netplan_dest: "/etc/netplan/99-post.yaml"
 
   tasks:
-    - name: Ensure the directory /etc/netplan exists
-      file:
-        path: /etc/netplan
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
+    - block:
+      - name: Ensure the directory /etc/netplan exists
+        file:
+          path: /etc/netplan
+          state: directory
+          owner: root
+          group: root
+          mode: '0755'
 
-    - name: Copy netplan config to remote
-      copy:
-        src: "{{ netplan_src }}"
-        dest: "{{ netplan_dest }}"
-        owner: root
-        group: root
-        mode: '0644'
-        backup: yes
-      notify: Apply netplan
+      - name: Copy netplan config to remote
+        copy:
+          src: "{{ netplan_src }}"
+          dest: "{{ netplan_dest }}"
+          owner: root
+          group: root
+          mode: '0644'
+          backup: yes
+        notify: Apply netplan
+      
+      when: ansible_facts['distribution'] == 'Ubuntu'
 
   handlers:
     - name: Apply netplan
