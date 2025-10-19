@@ -1,0 +1,90 @@
+---
+- name: Basic setup for Debian / Ubuntu
+  hosts: all
+  become: true
+  tasks:
+    - name: apt update
+      become: yes
+      ignore_unreachable: yes
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: apt upgrade
+      become: yes
+      ignore_unreachable: yes
+      ansible.builtin.apt:
+        upgrade: yes
+
+    - name: Install required packages
+      become: yes
+      ignore_unreachable: yes
+      ansible.builtin.apt:
+        name:
+          - git
+          - build-essential
+        state: present
+
+- name: Install KusaReMKN/lolipop
+  hosts: all
+  become: true
+  tasks:
+    - name: git clone KusaReMKN/lolipop
+      become: yes
+      ignore_unreachable: yes
+      ansible.builtin.git:
+        repo: 'https://github.com/kusaremkn/lolipop.git'
+        dest: /opt/lolipop
+        clone: yes
+        update: yes
+        version: devel
+      
+    - name: Make KusaReMKN/lolipop
+      become: yes
+      community.general.make:
+        chdir: /opt/lolipop
+      
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: /var/spool/lolipop
+        state: directory
+        mode: '0755'
+    
+    - name: Copy executable
+      become: yes
+      ansible.builtin.copy:
+        src: /opt/lolipop/lolipop
+        dest: /usr/local/bin/lolipop
+        mode: '0755'
+
+- name: Deploy netplan config and apply
+  hosts: all
+  become: yes
+  vars:
+    netplan_src: "../files/netplan/99-post.yaml"
+    netplan_dest: "/etc/netplan/99-post.yaml"
+
+  tasks:
+    - name: Ensure destination directory exists
+      file:
+        path: /etc/netplan
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Copy netplan config to remote
+      copy:
+        src: "{{ netplan_src }}"
+        dest: "{{ netplan_dest }}"
+        owner: root
+        group: root
+        mode: '0644'
+        backup: yes
+      notify: Apply netplan
+
+  handlers:
+    - name: Apply netplan
+      become: yes
+      command: netplan apply
+      register: netplan_apply
+      changed_when: false
