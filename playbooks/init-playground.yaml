@@ -3,26 +3,29 @@
   hosts: all
   become: true
   tasks:
-    - name: apt update
-      become: yes
-      ignore_unreachable: yes
-      ansible.builtin.apt:
-        update_cache: yes
+    - block:
+      - name: apt update
+        become: yes
+        ignore_unreachable: yes
+        ansible.builtin.apt:
+          update_cache: yes
 
-    - name: apt upgrade
-      become: yes
-      ignore_unreachable: yes
-      ansible.builtin.apt:
-        upgrade: yes
+      - name: apt upgrade
+        become: yes
+        ignore_unreachable: yes
+        ansible.builtin.apt:
+          upgrade: yes
 
-    - name: Install required packages
-      become: yes
-      ignore_unreachable: yes
-      ansible.builtin.apt:
-        name:
-          - git
-          - build-essential
-        state: present
+      - name: Install required packages
+        become: yes
+        ignore_unreachable: yes
+        ansible.builtin.apt:
+          name:
+            - git
+            - build-essential
+          state: present
+
+      when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install tkytel/lollipop
   hosts: all
