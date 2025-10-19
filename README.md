@@ -1,9 +1,9 @@
 # lollipop-playbook
 
-Set up the playground for LoLLIPoP
+LoLLIPoP を動作させる環境をセットアップします
 
-# Usage
+# 使用法
 
-```
-$ ansible-playbook -i "<host>," -u <user> -K playbooks/init-playground.yaml
-```
+    ```
+    $ ansible-playbook -i "<host>," -u <user> -K playbooks/init-playground.yaml
+    ```
