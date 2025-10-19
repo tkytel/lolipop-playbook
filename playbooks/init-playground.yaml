@@ -76,16 +76,15 @@
           group: root
           mode: '0755'
 
-      - name: Copy netplan config to remote
-        copy:
-          src: "{{ netplan_src }}"
+      - name: Generate netplan config from template
+        template:
+          src: ../files/netplan/99-post.yaml.j2
           dest: "{{ netplan_dest }}"
           owner: root
           group: root
           mode: '0644'
-          backup: yes
         notify: Apply netplan
-      
+        
       when: ansible_facts['distribution'] == 'Ubuntu'
 
   handlers:

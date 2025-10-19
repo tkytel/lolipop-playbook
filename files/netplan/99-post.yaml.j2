@@ -1,0 +1,9 @@
+network:
+  version: 2
+  ethernets:
+    post0:
+      dhcp4: false
+      dhcp6: false
+      accept-ra: false
+      addresses: [ {{ ip_addr }} ]
+      link-local: [ ]
