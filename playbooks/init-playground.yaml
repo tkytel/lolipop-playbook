@@ -93,3 +93,27 @@
       command: netplan apply
       register: netplan_apply
       changed_when: false
+
+- name: Install lollipod systemd service
+  hosts: all
+  become: true
+  vars:
+    service_name: lollipopd
+    service_unit_path: /etc/systemd/system/lollipopd.service
+    binary_path: /usr/local/bin/lollipop
+
+  tasks:
+    - name: Deploy systemd unit file for {{ service_name }}
+      copy:
+        src: ../files/systemd/lollipopd.service
+        dest: "{{ service_unit_path }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable and start {{ service_name }} service
+      systemd:
+        name: "{{ service_name }}"
+        enabled: true
+        state: restarted
+        daemon_reload: true
