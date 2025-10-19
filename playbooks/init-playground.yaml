@@ -43,20 +43,20 @@
       community.general.make:
         chdir: /opt/lolipop
       
-    - name: Create a directory if it does not exist
+    - name: Create a directory for lolipop's spool if it does not exist
       ansible.builtin.file:
         path: /var/spool/lolipop
         state: directory
         mode: '0755'
     
-    - name: Copy executable
+    - name: Copy lolipop executable
       become: yes
       ansible.builtin.copy:
         src: /opt/lolipop/lolipop
         dest: /usr/local/bin/lolipop
         mode: '0755'
 
-- name: Deploy netplan config and apply
+- name: Deploy netplan config and apply for lolipopd's interface
   hosts: all
   become: yes
   vars:
@@ -64,7 +64,7 @@
     netplan_dest: "/etc/netplan/99-post.yaml"
 
   tasks:
-    - name: Ensure destination directory exists
+    - name: Ensure the directory /etc/netplan exists
       file:
         path: /etc/netplan
         state: directory
