@@ -1,6 +1,6 @@
-# lolipop-playbook
+# lollipop-playbook
 
-Set up the playground for LoLIPoP
+Set up the playground for LoLLIPoP
 
 # Usage
 
